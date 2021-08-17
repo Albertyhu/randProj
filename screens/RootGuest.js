@@ -10,9 +10,13 @@ const Stack = createStackNavigator();
 const RootGuest = () =>{
 return(
 <Stack.Navigator screenOptions = {{
-    headerShown: 'none', }}>
-    <Stack.Screen name = 'SignIn' component = {SignIn} options = {{title: 'Sign In'}}/>
-    <Stack.Screen name = 'SignUp' component = {SignUp} options = {{title: 'Sign Up'}}/>
+    headerShown: false, }}>
+    <Stack.Screen name = 'SignUp' component = {SignUp} options = {{title: 'Sign Up',
+    }}/>
+    <Stack.Screen name = 'SignIn' component = {SignIn} options = {{title: 'Sign In',
+    }}/>
 </Stack.Navigator>
 )
 }
+
+export default RootGuest;
