@@ -5,9 +5,13 @@ import Feather from 'react-native-feather';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {LinearGradient} from 'expo-linear-gradient';
 import { SocialIcon } from 'react-native-elements';
+import firebase from 'firebase'
+require('firebase/auth');
 
 import SignUp from './SignUp.js';
 import { SocialButton } from '../component/SocialIcon.js';
+import {signIn} from '../component/firebasemethods.js';
+import Home from './home.js';
 
 const SignIn = ({navigation}) =>{
 
@@ -35,12 +39,16 @@ const handlePass = val =>{
 const isEmailValid = () =>{
     const arr = data.email.split('@');
     if(arr.length >=2 && arr[1]){
-        const arr2 = arr.split('.')
+        const arr2 = arr[1].split('.')
         if(arr2.length >= 2 && arr2[1]){
-            setData({
-                ...data,
-                isValid: true,
-            })
+            //arr3 checks if there are spaces in the user's input
+            const arr3 = data.email.trim().split(' ');
+            if(arr3.length < 2 && arr3[0]){
+                setData({
+                    ...data,
+                    isValid: true,
+                })
+            }
         }
         else{
              setData({
@@ -62,6 +70,24 @@ const toggleSecure = () =>{
         ...data,
         secureData: !prevState.secureData,
     }))
+}
+
+const handleSubmit = () =>{
+    if(data.isValid){
+        firebase.auth().signInWithEmailAndPassword(data.email, data.password)
+          .then((userCredential) => {
+
+            var user = userCredential.user;
+
+          })
+          .catch((error) => {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+          });
+    }
+    else{
+        alert('Either email or password is invalid.')
+    }
 }
 
 useEffect(()=>{
@@ -113,7 +139,7 @@ return(
           </View>
      </View>
 
-     <TouchableOpacity style = {styles.buttonContainer}>
+     <TouchableOpacity style = {styles.buttonContainer} onPress = {handleSubmit}>
          <LinearGradient colors = {['#23B525', '#1e901f']}  style = {styles.button}>
             <Text style = {styles.buttonText}>Sign In</Text>
             <Icon name = 'chevron-forward-outline' size = {25} color = '#fff' style = {styles.icon} />

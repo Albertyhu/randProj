@@ -28,6 +28,9 @@ import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Nullable;
 
+//added 8/24/21
+import io.invertase.firebase.auth.RNFirebaseAuthPackage;
+
 public class MainApplication extends Application implements ReactApplication {
   private final ReactModuleRegistryProvider mModuleRegistryProvider = new ReactModuleRegistryProvider(
     new BasePackageList().getPackageList()
@@ -123,3 +126,6 @@ public class MainApplication extends Application implements ReactApplication {
     }
   }
 }
+
+//added 8/24/21
+new RNFirebaseNotificationsPackage()

@@ -4,9 +4,19 @@ import * as Animated from 'react-native-animatable';
 import {LinearGradient} from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import {SocialButton} from '../component/SocialIcon.js';
+//The following two lines need to be written for creating a new account to work
+import firebase from 'firebase';
+require('firebase/auth')
 
-const SignUp = () =>{
+
+import "firebase/auth";
+
+import {SocialButton} from '../component/SocialIcon.js';
+import {createNewAccount, sendEmailVerification} from '../component/tokenGenerator.js';
+import Home from './home.js';
+import RootTabs from './RootTabs.js';
+
+const SignUp = ({navigation}) =>{
 const [data, setData] = React.useState({
     email: '',
     password: '',
@@ -42,10 +52,14 @@ const isEmailValid = () =>{
     if(arr.length >=2 && arr[1]){
         const arr2 = arr[1].split('.');
         if(arr2.length >= 2 && arr2[1]){
-            setData({
-                ...data,
-                isValid: true,
-            })
+            //arr3 checks if there are spaces in the user's input
+            const arr3 = data.email.trim().split(' ');
+            if(arr3.length < 2 && arr3[0]){
+                setData({
+                    ...data,
+                    isValid: true,
+                })
+            }
         }
         else{
              setData({
@@ -87,6 +101,17 @@ function validatePassword (){
 const createAccount = () =>{
     if(data.isValid && data.passValid){
         alert('Account created!')
+        firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
+          .then((userCredential) => {
+            // Signed in
+            var user = userCredential.user;
+          })
+          .catch((error) => {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // ..
+          });
+
     }
     else if(!data.isValid && data.passValid){
         alert('Error: Email format is not valid.')
@@ -111,7 +136,7 @@ validatePassword();
 
 return(
 <SafeAreaView style = {styles.container}>
-<ScrollView style = {{width: '100%',}}>
+<ScrollView contentContainerStyle = {{width: '100%', flexGrow: 1, justifyContent: 'space-between'}}>
 <View style = {styles.head} >
     <Text style = {styles.title}>Create a new account</Text>
 </View>
@@ -151,7 +176,7 @@ style = {styles.body}>
                  autoCapitalize = 'none'
              />
               {data.secureData ?
-                     <Icon name = 'eye-off' size = {25} color = '#1BAC1E' style = {[styles.icon, {alignSelf: 'flex-end'}]} onPress = {toggleSecure}/>
+                     <Icon name = 'eye-off' size = {25} color = '#1BAC1E' style = {styles.icon} onPress = {toggleSecure}/>
                      :
                     <Icon name = 'eye' size = {25} color = '#1BAC1E' style = {[styles.icon, {alignSelf: 'flex-end'}]} onPress = {toggleSecure}/>
                  }
@@ -187,7 +212,7 @@ style = {styles.body}>
                Already a member?
             </Text>
         </View>
-         <TouchableOpacity onPress = {()=>{navigation.navigate('SignUp')}} style = {styles.signIn}>
+         <TouchableOpacity onPress = {()=>{navigation.navigate('SignIn')}} style = {styles.signIn}>
             <View style = {styles.signInButton}>
                 <Text style = {styles.signUpText}>Sign In</Text>
                 <Icon name = 'chevron-forward-outline' style = {styles.icon} color = '#000' size = {25} />
@@ -233,6 +258,7 @@ container:{
     backgroundColor: '#23B525',
     alignItems: 'center',
     flex: 1,
+
 },
 head:{
     flex: 1,
@@ -272,6 +298,7 @@ google:{
 },
 icon: {
     padding: 5,
+
 },
 inputContainer:{
     alignItems: 'center',
@@ -281,6 +308,7 @@ row: {
     borderWidth: 1,
     borderColor: '#000',
     width: '95%',
+    justifyContent: 'space-between',
 },
 signIn:{
     alignItems: 'center',
