@@ -49,6 +49,12 @@ const isEmailValid = () =>{
                     isValid: true,
                 })
             }
+            else{
+                 setData({
+                     ...data,
+                     isValid: false,
+                 })
+            }
         }
         else{
              setData({
@@ -73,12 +79,12 @@ const toggleSecure = () =>{
 }
 
 const handleSubmit = () =>{
+    isEmailValid();
+    const email = data.email.trim();
     if(data.isValid){
-        firebase.auth().signInWithEmailAndPassword(data.email, data.password)
+        firebase.auth().signInWithEmailAndPassword(email, data.password)
           .then((userCredential) => {
-
             var user = userCredential.user;
-
           })
           .catch((error) => {
             var errorCode = error.code;

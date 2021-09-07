@@ -3,21 +3,35 @@ import React, { Component, useEffect } from 'react';
 import { StyleSheet, Text, View} from 'react-native';
 import {NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {createDrawerNavigator} from '@react-navigation/drawer';
+import {createDrawerNavigator, openDrawer} from '@react-navigation/drawer';
 import firebase from 'firebase';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 //import { firebase } from '@firebase/app'
 import 'firebase/auth';
 import {AuthContext, AuthProvider} from './component/AuthContext.js';
-
+//code for connecting redux to react native
+import { Provider, connect } from 'react-redux';
+import { createStore, applyMiddleware, bindActionCreators } from 'redux';
+import thunk from 'redux-thunk';
+import RootReducer from './reduxFolder/reducers';
+import {fetchUser} from './reduxFolder/actions/index';
 
 import Explore from './screens/explore.js';
 import RootGuest from './screens/RootGuest.js';
 import {RootTabs} from './screens/RootTabs.js';
 import Loading from './screens/loading.js';
-import Route from './component/route.js';
+import {DrawerContent} from './screens/DrawerContent.js';
+import EditProfile from './screens/EditProfile.js';
 
+const store = createStore(RootReducer, applyMiddleware(thunk))
+const mapDispatchProps = (dispatch) => bindActionCreators({fetchUser}, dispatch)
+const mapStateToProps = (store) => ({
+   currentUser: store.userState.currentUser
+})
 const Stack = createStackNavigator();
+const EditStack = createStackNavigator();
+
 var firebaseConfig = {
     apiKey: "AIzaSyBtyxv904sSImhhtkgnO3XtER5LW1KArx8",
     authDomain: "randproj-41a0d.firebaseapp.com",
@@ -35,6 +49,8 @@ var firebaseConfig = {
  }
  // firebase.analytics();
 
+const Drawer = createDrawerNavigator();
+
 export default function App() {
 
 const initialData = {
@@ -43,9 +59,12 @@ const initialData = {
     token: '',
     firstName: '',
     lastName: '',
+
 }
 
 const [ loggedIn, setLog] = React.useState(false);
+const [isLoading, setLoading] = React.useState(true);
+const [userName, setName ] = React.useState('');
 
 const dataReducer = (prevState, action) =>{
 switch(action.type){
@@ -83,9 +102,8 @@ switch(action.type){
 const [data, dispatch] = React.useReducer(dataReducer, initialData);
 
 const context = React.useMemo(()=>({
-signIn: (email, password, token) =>{
-    dispatch({type: 'LOGIN', mail: email, pass: password, userToken: token});
-}
+
+
 }))
 
 const Direct = () =>{
@@ -111,21 +129,64 @@ firebase.auth().onAuthStateChanged((user) => {
 }
 
 useEffect(()=>{
-    firebase.auth().onAuthStateChanged((user) => {
+setTimeout(async () =>{
+    await firebase.auth().onAuthStateChanged((user) => {
         if(!user){
             setLog(false);
+
         }
         else{
             setLog(true);
+
         }
     })
+    setLoading(false);
+    }, 2000)
 }, [])
 
   return (
+<Provider store = {store}>
+<AuthContext.Provider value = {context}>
+{isLoading ?
+<Loading />
+:
 <NavigationContainer>
-    {loggedIn ? <RootTabs /> : <RootGuest />}
+    {loggedIn ?
+        <Drawer.Navigator drawerContent = {props => <DrawerContent {...props} /> }>
+            <Drawer.Screen name = 'RootTabs' component = {RootTabs} options = {{
+                headerShown: false,
+            }}/>
+            <Drawer.Screen name = 'EditProfile' component = {EditStackScreen} options ={{
+                headerShown: false,
+             }}/>
+        </Drawer.Navigator>
+
+    : <RootGuest />
+    }
 </NavigationContainer>
+}
+</AuthContext.Provider>
+</Provider>
   );
+}
+
+connect(mapStateToProps, mapDispatchProps)(App);
+
+const EditStackScreen = ({navigation}) =>{
+return(
+<EditStack.Navigator>
+    <EditStack.Screen name = 'EditProfileStack' component = {EditProfile} options = {{
+        title: 'Edit Your Profile',
+        headerLeft: () => <Icon.Button
+            name = 'ios-menu'
+            color = '#000'
+            size = {25}
+            onPress = {() => navigation.openDrawer()}
+            style = {styles.iosMenu}
+        />,
+    }} />
+</EditStack.Navigator>
+)
 }
 
 const styles = StyleSheet.create({
@@ -135,4 +196,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+    iosMenu:{
+      paddingLeft: 10,
+      backgroundColor: '#fff',
+    },
 });
+

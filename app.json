@@ -7,9 +7,13 @@
       "**/*"
     ],
     "plugins": [
-      "@react-native-firebase/app",
-
-    ]
+      "@react-native-firebase/app"
+    ],
+    "android": {
+      "package": "com.randproj",
+      "googleServicesFile": "./android/app/google-services.json"
+    }
   },
+
   "name": "randProj"
 }

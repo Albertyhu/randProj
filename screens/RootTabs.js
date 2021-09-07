@@ -14,25 +14,39 @@ import Profile from './profile.js';
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
 
+const HomeBarColor = () =>{
+return '#00AAFF'
+}
+
+const ExploreBarColor = () =>{
+return '#FBB40C'
+}
+
+const ProfileBarColor = () =>{
+return '#A8E6CF'
+}
+
 export const RootTabs = () =>{
 return (
     <Tab.Navigator
         initialRouteName = 'Home'
         inactiveColor = '#B0B0B0'
         activeColor = '#fff'
+        /*For some reason, in the bare workflow version, shifting prop is necessary*/
+        shifting = {true}
     >
         <Tab.Screen name = "Home" component ={HomeStackScreen} options ={{
-            tabBarColor: '#00AAFF',
+            tabBarColor:  HomeBarColor(),
             tabBarLabel: 'Home',
             tabBarIcon: ({color}) => <Icon name = 'home' color = {color} size = {25} />
         }}/>
         <Tab.Screen name = 'Explore' component = {ExploreStackScreen} options = {{
-            tabBarColor: '#FBB40C',
+            tabBarColor: ExploreBarColor(),
             tabBarLabel: 'Explore',
             tabBarIcon: ({color}) => <Icon name = 'navigate-circle-outline' color = {color} size = {25} />
         }}/>
         <Tab.Screen name = 'Profile' component = {ProfileStackScreen} options = {{
-            tabBarColor: '#A8E6CF',
+            tabBarColor: ProfileBarColor(),
             tabBarLabel: 'Profile',
             tabBarIcon: ({color}) => <Icon name = 'ios-person' color = {color} size = {25} />
         }}/>
@@ -63,7 +77,7 @@ return(
     headerStyle: {backgroundColor: '#A8E6CF'}
 }}>
     <ProfileStack.Screen name = 'HomeStack' component = {Profile} options = {{
-        title: 'Home',
+        title: 'Profile',
         headerLeft: () => <Icon.Button name = 'ios-menu' color = '#fff' backgroundColor = '#A8E6CF' size = {25} onPress = {() => navigation.openDrawer()} />
     }} />
 </ProfileStack.Navigator>
@@ -76,7 +90,7 @@ return(
     headerStyle: {backgroundColor: '#FBB40C'}
 }}>
     <ExploreStack.Screen name = 'HomeStack' component = {Explore} options = {{
-        title: 'Home',
+        title: 'Explore',
         headerLeft: () => <Icon.Button name = 'ios-menu' color = '#fff' backgroundColor = '#FBB40C' size = {25} onPress = {() => navigation.openDrawer()} />
     }} />
 </ExploreStack.Navigator>

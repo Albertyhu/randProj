@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "886374789756",
+    "firebase_url": "https://randproj-41a0d-default-rtdb.firebaseio.com",
     "project_id": "randproj-41a0d",
     "storage_bucket": "randproj-41a0d.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "886374789756-7bspt7o14d2gk7pchpjbloiofc0erbpi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.randproj",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
         {
           "client_id": "886374789756-1egre4n50utv1btvudnsetdigt8g4tk5.apps.googleusercontent.com",
           "client_type": 3

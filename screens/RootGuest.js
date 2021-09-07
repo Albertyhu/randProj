@@ -13,12 +13,12 @@ const RootGuest = () =>{
 return(
 <Stack.Navigator screenOptions = {{
     headerShown: false, }}>
+     <Stack.Screen name = 'SignIn' component = {SignIn} options = {{title: 'Sign In',
+     }}/>
      <Stack.Screen name = 'SignUp' component = {SignUp} options = {{title: 'Sign Up',
      }}/>
     <Stack.Screen name = 'ResetPass' component = {ResetPass } options = {{ title:'Reset Password'}} />
 
-    <Stack.Screen name = 'SignIn' component = {SignIn} options = {{title: 'Sign In',
-    }}/>
 </Stack.Navigator>
 )
 }

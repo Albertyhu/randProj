@@ -18,13 +18,24 @@ import RootTabs from './RootTabs.js';
 
 const SignUp = ({navigation}) =>{
 const [data, setData] = React.useState({
+    name: '',
     email: '',
     password: '',
     confirmPass: '',
     isValid: false,
     passValid: false,
     secureData: false,
+    hasName: false,
+    nameErr: false,
+
 })
+
+const handleName = val =>{
+    setData({
+        ...data,
+        name: val,
+    })
+}
 
 const handleEmail = val =>{
     setData({
@@ -99,11 +110,18 @@ function validatePassword (){
 }
 
 const createAccount = () =>{
+    if(data.hasName){
     if(data.isValid && data.passValid){
         alert('Account created!')
         firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
           .then((userCredential) => {
             // Signed in
+            firebase.firestore().collection('users')
+            .doc(firebase.auth().currentUser.uid)
+            .set({
+                name: data.name,
+                email: data.email,
+            })
             var user = userCredential.user;
           })
           .catch((error) => {
@@ -122,7 +140,13 @@ const createAccount = () =>{
     else if (!data.isValid && !data.passValid){
         alert('Error: Email format is not valid. \n Passwords entered are not the same or password is not long enough. The password needs to be at least 4 characters long.')
     }
-
+}
+else{
+    setData({
+        ...data,
+        nameErr: true,
+    })
+}
 }
 
 useEffect(()=>{
@@ -133,6 +157,23 @@ useEffect(()=>{
 validatePassword();
 }, [data.confirmPass, data.password])
 
+
+useEffect(()=>{
+if(data.name.trim().length >= 4){
+    setData({
+        ...data,
+        hasName: true,
+        nameErr: false,
+    })
+}
+else{
+    setData({
+        ...data,
+        hasName: false,
+        nameErr: false,
+    })
+}
+}, [data.name])
 
 return(
 <SafeAreaView style = {styles.container}>
@@ -145,7 +186,25 @@ return(
     delay = {1000}
 style = {styles.body}>
 
- <Text style = {[styles.subTitle, {marginTop: 50,}]}>Email</Text>
+ <Text style = {[styles.subTitle, {marginTop: 50,}]}>Name</Text>
+    <View style = {styles.inputContainer}>
+        <View style = {styles.row}>
+            <Icon name = 'person-outline' size = {25} color = '#23B525' style = {styles.icon} />
+            <TextInput
+                value = {data.name}
+                onChangeText = {handleName}
+                placeholder = 'Type your name here'
+                style = {styles.textInput}
+            />
+             {data.hasName ?
+                    <Icon name = 'checkmark-circle-outline' size = {25} color = '#1BAC1E' style = {[styles.icon, {alignSelf: 'flex-end'}]} />
+                    :
+                   <Icon name = 'checkmark-circle-outline' size = {25} color = '#B6B6B6' style = {[styles.icon, {alignSelf: 'flex-end'}]} />
+                }
+          </View>
+     </View>
+
+ <Text style = {[styles.subTitle, {marginTop: 15,}]}>Email</Text>
     <View style = {styles.inputContainer}>
         <View style = {styles.row}>
             <Icon name = 'mail-outline' size = {25} color = '#23B525' style = {styles.icon} />
@@ -201,6 +260,11 @@ style = {styles.body}>
                  }
            </View>
       </View>
+      <View style = {{alignItems: 'center',}}>
+        {data.nameErr &&
+              <Text style = {styles.errMess}>Your username must be 4 letters or more</Text>
+        }
+        </View>
        <TouchableOpacity onPress = {createAccount} style = {styles.buttonContainer}>
            <LinearGradient colors = {['#23B525', '#1e901f']}  style = {styles.button}>
               <Text style = {styles.buttonText}>Sign Up</Text>
@@ -278,6 +342,9 @@ buttonText:{
     fontSize: 20,
     paddingLeft: 10,
 },
+errMess: {
+    color: '#e31b0a',
+},
 facebook:{
     alignItems: 'center',
     backgroundColor: '#3b5998',
@@ -308,7 +375,8 @@ row: {
     borderWidth: 1,
     borderColor: '#000',
     width: '95%',
-    justifyContent: 'space-between',
+    /*justifyContent: 'space-between',*/
+    marginHorizontal: 10,
 },
 signIn:{
     alignItems: 'center',
