@@ -1,0 +1,3 @@
+//comment
+The method of using CameraRedux doesn't work.
+I think it's because there is only one redux storage allowed for each application.

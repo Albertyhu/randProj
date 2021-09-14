@@ -7,3 +7,9 @@ export const USERS_LIKES_STATE_CHANGE = 'USERS_LIKES_STATE_CHANGE'
 export const USERS_DATA_STATE_CHANGE = 'USERS_DATA_STATE_CHANGE'
 
 export const CLEAR_DATA = 'CLEAR_DATA'
+
+
+export const SET_IMAGE = 'SET_IMAGE';
+export const DISPLAY_IMAGE = 'DISPLAY_IMAGE';
+export const RESET_IMAGE = 'RESET_IMAGE';
+export const FILL = 'FILL';

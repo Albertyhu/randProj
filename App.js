@@ -23,6 +23,8 @@ import {RootTabs} from './screens/RootTabs.js';
 import Loading from './screens/loading.js';
 import {DrawerContent} from './screens/DrawerContent.js';
 import EditProfile from './screens/EditProfile.js';
+import Add from './screens/add.js';
+import previewCamera from './screens/previewCamera.js';
 
 const store = createStore(RootReducer, applyMiddleware(thunk))
 const mapDispatchProps = (dispatch) => bindActionCreators({fetchUser}, dispatch)
@@ -145,6 +147,7 @@ setTimeout(async () =>{
 }, [])
 
   return (
+  //Provider connects react components to the redux store so you can use redux hooks and methods
 <Provider store = {store}>
 <AuthContext.Provider value = {context}>
 {isLoading ?
@@ -159,6 +162,10 @@ setTimeout(async () =>{
             <Drawer.Screen name = 'EditProfile' component = {EditStackScreen} options ={{
                 headerShown: false,
              }}/>
+            <Drawer.Screen name = 'AddProfile' component = {AddStackScreen} options ={{
+                 headerShown: false,
+              }}/>
+
         </Drawer.Navigator>
 
     : <RootGuest />
@@ -186,6 +193,36 @@ return(
         />,
     }} />
 </EditStack.Navigator>
+)
+}
+
+
+const AddStack = createStackNavigator();
+
+const AddStackScreen = ({navigation}) =>{
+return(
+<AddStack.Navigator>
+    <AddStack.Screen name = 'AddStack' component = {Add} options = {{
+        title: "Add your photo",
+        headerLeft: () => <Icon.Button
+            name = 'ios-menu'
+            color = '#000'
+            size = {25}
+            onPress = {() => navigation.openDrawer()}
+            style = {styles.iosMenu}
+        />,
+    }} />
+    <AddStack.Screen name = 'previewCamera' component = {previewCamera} options ={{
+       title: "Preview Image",
+       headerLeft: () => <Icon.Button
+           name = 'ios-menu'
+           color = '#000'
+           size = {25}
+           onPress = {() => navigation.openDrawer()}
+           style = {styles.iosMenu}
+       />,
+    }} />
+</AddStack.Navigator>
 )
 }
 

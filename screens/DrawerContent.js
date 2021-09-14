@@ -16,6 +16,7 @@ import Home from './home.js';
 import Explore from './explore.js';
 import Profile from './profile.js';
 import EditProfile from './EditProfile.js';
+import AddProfile from './add.js';
 
 export function DrawerContent(props){
     const SignOut = () =>{
@@ -56,6 +57,11 @@ return(
           onPress = {() => props.navigation.navigate('EditProfile')}
           icon = {({color, size}) => <Icon name = 'pencil-outline' color = '#000' size = {size} />}
       />
+        <DrawerItem
+            label = {({focused, color }) => <Text style = {{color: '#000' }}>Add</Text> }
+            onPress = {() => props.navigation.navigate('AddProfile')}
+            icon = {({color, size}) => <Icon name = 'add-outline' color = '#000' size = {size} />}
+        />
     </Drawer.Section>
     <Divider />
     <Drawer.Section>
