@@ -1,9 +1,15 @@
-import { USER_STATE_CHANGE, CLEAR_DATA } from '../constants';
+import React from 'react';
+
+import { USER_STATE_CHANGE, CLEAR_DATA, SET_NAME, SET_POSTS, SET_PROFILEPIC, SET_PROFILEPICURL, FILL } from '../constants';
 
 const initialState = {
     currentUser: null,
     posts: [],
     following: [],
+    profilePicPath: '',
+    profilePicURL: '',
+    username: '',
+    email: '',
 }
 
 export const user = (state = initialState, action) =>{
@@ -15,7 +21,37 @@ export const user = (state = initialState, action) =>{
             }
          case CLEAR_DATA:
             return initialState;
+         case SET_NAME:
+            return{
+                ...state,
+                username: action.name,
+            }
+
+         case SET_POSTS:
+             return{
+                ...state,
+                posts: action.post,
+             }
+
+         case SET_PROFILEPIC:
+            return{
+                ...state,
+                profilePicPath: action.path,
+            }
+         case SET_PROFILEPICURL:
+            return{
+                ...state,
+                profilePicURL: action.url,
+            }
+         case FILL:
+            return{
+                ...state,
+                username: action.name,
+                email: action.mail,
+                currentUser: action.currentUser,
+            }
          default:
             return state;
     }
 }
+

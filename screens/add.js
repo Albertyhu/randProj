@@ -5,15 +5,17 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Animated from 'react-native-animatable';
 import {useIsFocused} from '@react-navigation/native';
 import {CameraContext} from '../component/CameraContext.js';
+import SampleForm from './sampleform.js';
 
 //redux imports
 import { connect } from 'react-redux';
 import {bindActionCreators} from 'redux'
-import {setCameraImage, reset} from '../reduxFolder/actions/index.js';
+import {setCameraImage, reset, setPrevImage} from '../reduxFolder/actions/index.js';
 
 import previewCamera from './previewCamera.js';
+import Save from './save1.js';
 
-const Add = ({navigation, previewImage, test, setCameraImage}) =>{
+const Add = ({navigation, previewImage, test, setCameraImage, setPrevImage}) =>{
 
 //useIsFocused() is necessary in order to keep the camera running; Without it, when the user switches from this screen to the another screen, then back to this screen again,
 //the camera stops running.
@@ -89,6 +91,7 @@ return <Text>Can't record because application lacks access to audio</Text>;
 const cameraOptions = ({
     quality: 1,
     skipProcessing: true,
+    mirror: true,
 })
 
 const videoOptions = {
@@ -106,6 +109,8 @@ if(cameraRef){
 setRecording(false);
 }
 
+//Method 1. This stores the image into redux store and then navigates to previewCamera page
+/*
 const takePhoto = async () =>{
 if(cameraRef){
 isLoading();
@@ -114,7 +119,21 @@ const imageURI = await cameraRef.takePictureAsync(cameraOptions);
 setCameraImage(imageURI.uri);
 navigation.navigate('previewCamera');
 }
+}*/
+
+//Method 2
+const takePhoto = async () =>{
+if(cameraRef){
+isLoading();
+const imageURI = await cameraRef.takePictureAsync(cameraOptions);
+
+setCameraImage(imageURI.uri);
+setImage(imageURI.uri)
+//navigation.navigate('Save', {image});
+navigation.navigate('Save');
 }
+}
+
 
 const toggleRecording = () => {
     setRecording(prevState => ({isRecording: !prevState.isRecording}))
@@ -186,12 +205,12 @@ return(
         </TouchableOpacity>
     </View>
     <View style = {styles.buttonContainer}>
-        <TouchableOpacity onPress = {() => {navigation.navigate('previewCamera')}}>
+        <TouchableOpacity onPress = {() => {navigation.navigate('SampleForm')}}>
             <View style = {styles.button}>
             <Text style = {{
                 color: '#fff',
                 padding: 5,
-            }}>Preview Image</Text>
+            }}>SampleForm</Text>
             </View>
         </TouchableOpacity>
     </View>
@@ -217,7 +236,7 @@ return{
        test: store.cameraR.testString,
 }
 }
-const mapDispatchToProps = (dispatch) => bindActionCreators({setCameraImage, reset}, dispatch)
+const mapDispatchToProps = (dispatch) => bindActionCreators({setCameraImage, reset, setPrevImage}, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(Add);
 

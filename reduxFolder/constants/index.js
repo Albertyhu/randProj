@@ -13,3 +13,9 @@ export const SET_IMAGE = 'SET_IMAGE';
 export const DISPLAY_IMAGE = 'DISPLAY_IMAGE';
 export const RESET_IMAGE = 'RESET_IMAGE';
 export const FILL = 'FILL';
+export const SET_NAME = 'SET_NAME';
+export const SET_POSTS = 'SET_POSTS';
+
+//sets profile picture by having redux store the pictures unique ID
+export const SET_PROFILEPIC = 'SET_PROFILEPIC';
+export const SET_PROFILEPICURL = 'SET_PROFILEPICURL';

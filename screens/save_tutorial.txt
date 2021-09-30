@@ -1,0 +1,91 @@
+import React, { useState } from 'react'
+import { View, TextInput, Image, Button } from 'react-native'
+
+import firebase from 'firebase'
+import { NavigationContainer } from '@react-navigation/native'
+require("firebase/firestore")
+require("firebase/firebase-storage")
+
+
+export default function Save(props) {
+    const [caption, setCaption] = useState("")
+
+    const uploadImage = async () => {
+        const uri = props.route.params.image;
+
+	//'childPath' is responsible for creating the path of the file and the file itself in the storage
+	//The reason we generate a random string is to name the file once it's created in storage
+	//What the path looks like: 'post/[users'uid]/userPosts/[some random string of letters and numbers]'
+	//I noticed that no where in the does the directory 'userPosts'	gets defined
+        const childPath = `post/${firebase.auth().currentUser.uid}/${Math.random().toString(36)}`;
+
+
+        console.log(childPath)
+
+        //fetches the image from the constant 'uri'
+        //but why is this necessary?
+        const response = await fetch(uri);
+
+        //Uses a blob constructor to create a blob of the image to be uploaded to firestore
+        //This typically how images are stored in firestore
+        const blob = await response.blob();
+
+        const task = firebase
+            .storage()
+            .ref()
+            .child(childPath)
+            .put(blob);
+
+	//tells how many bytes are transferred
+        const taskProgress = snapshot => {
+            console.log(`transferred: ${snapshot.bytesTransferred}`)
+        }
+
+	//getDownloadURL creates a url that allows anyone in the public to download the image
+        const taskCompleted = () => {
+	//const task must be written to access it directly; cannot use snapshot alone for some reason
+            task.snapshot.ref.getDownloadURL().then((snapshot) => {
+                savePostData(snapshot);
+                console.log(snapshot)
+            })
+        }
+
+        const taskError = snapshot => {
+            console.log(snapshot)
+        }
+
+	//the order of the parameters matter
+	//.on() method is a jquery method that attaches event handlers to selected elements
+	//According to Firebase documentation, on() method is used to read data at a path and listen for changes.
+	//[Syntax according to JQuery documentation] $(selector).on(event,childSelector,data,function,map)
+	//"state_changed" is an arbitrary name given
+        task.on("state_changed", taskProgress, taskError, taskCompleted);
+    }
+
+    const savePostData = (downloadURL) => {
+
+        firebase.firestore()
+            .collection('posts')
+            .doc(firebase.auth().currentUser.uid)
+            .collection("userPosts")
+            .add({
+                downloadURL,
+                caption,
+                likesCount: 0,
+                creation: firebase.firestore.FieldValue.serverTimestamp()
+            }).then((function () {
+                props.navigation.popToTop()
+            }))
+    }
+    return (
+        <View style={{ flex: 1 }}>
+            <Image source={{ uri: props.route.params.image }} />
+            <TextInput
+                placeholder="Write a Caption . . ."
+                onChangeText={(caption) => setCaption(caption)}
+            />
+
+            <Button title="Save" onPress={() => uploadImage()} />
+        </View>
+    )
+}

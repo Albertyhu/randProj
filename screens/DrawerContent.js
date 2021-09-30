@@ -1,5 +1,5 @@
-import React from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, SafeAreaView } from 'react-native';
+import React, {useEffect} from 'react';
+import {View, TouchableOpacity, Text, StyleSheet, SafeAreaView, Image } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {DrawerItem, createDrawerNavigator, DrawerContentScrollView, DrawerItemList} from '@react-navigation/drawer';
@@ -12,13 +12,18 @@ import {Paragraph,
         Switch,} from 'react-native-paper';
 import firebase from 'firebase';
 require ('firebase/auth');
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { setName, fetchUser } from '../reduxFolder/actions/index.js';
+
 import Home from './home.js';
 import Explore from './explore.js';
 import Profile from './profile.js';
 import EditProfile from './EditProfile.js';
 import AddProfile from './add.js';
 
-export function DrawerContent(props){
+function DrawerContent(props){
+    const {ProPicURL, username, email } = props;
     const SignOut = () =>{
         firebase.auth().signOut().then(() => {
           // Sign-out successful.
@@ -27,9 +32,30 @@ export function DrawerContent(props){
         });
     }
 
-
+/*
+    useEffect(()=>{
+        console.log(ProPicURL ? ProPicURL : "URL doesn't exist")
+    }, [])
+*/
 return(
 <DrawerContentScrollView {...props}>
+    <Drawer.Section>
+    {ProPicURL ?
+        <Image
+            source = {{uri: ProPicURL}}
+            style = {styles.image}
+        />
+        : <View></View>
+     }
+      <View style = {[styles.row, {marginLeft: 20}]}>
+          <Text style = {{fontWeight: 'bold'}}>User: </Text>
+          <Text>{username}</Text>
+      </View>
+       <View style = {[styles.row, {marginLeft: 20}]}>
+           <Text style = {{fontWeight: 'bold'}}>Email: </Text>
+           <Text>{email}</Text>
+       </View>
+    </Drawer.Section>
     <Drawer.Section>
     <DrawerItem
         label = {({focused, color }) => <Text style = {{color: '#000' }}>Home</Text> }
@@ -79,4 +105,26 @@ return(
 const styles = StyleSheet.create({
 container: {},
 drawerItem: {},
+image: {
+    width: 100,
+    height: 100,
+    borderRadius: 100,
+    marginTop: 30,
+    marginBottom: 20,
+    marginLeft: 20,
+},
+row:{
+    flexDirection: 'row',
+},
 })
+
+const mapDispatchtoProps = dispatch => bindActionCreators({setName, fetchUser}, dispatch);
+
+const mapStatetoProps = store =>{
+return{
+    ProPicURL: store.userState.profilePicURL,
+    username: store.userState.username,
+    email: store.userState.email,
+}}
+
+export default connect (mapStatetoProps, mapDispatchtoProps)(DrawerContent);

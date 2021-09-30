@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, StyleSheet, Text, Button} from 'react-native';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -6,6 +6,9 @@ import {createStackNavigator} from '@react-navigation/stack';
 //import Icon from '../node_modules/react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {openDrawer} from '@react-navigation/drawer';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { fetchUser, setName, fetchProfilePic, setProfilePic } from '../reduxFolder/actions/index.js';
 
 import Home from './home.js';
 import Explore from './explore.js';
@@ -26,7 +29,14 @@ const ProfileBarColor = () =>{
 return '#A8E6CF'
 }
 
-export const RootTabs = () =>{
+const RootTabs = ({fetchUser, setName, fetchProfilePic, setProfilePic,  ProPicURL}) =>{
+useEffect(()=>{
+    fetchUser();
+    setName();
+
+    //stores the download URL of profile pic into redux store
+    setProfilePic();
+}, [])
 return (
     <Tab.Navigator
         initialRouteName = 'Home'
@@ -53,6 +63,13 @@ return (
     </Tab.Navigator>
 )
 }
+
+const mapDispatch = (dispatch) => bindActionCreators({fetchUser, setName, fetchProfilePic, setProfilePic}, dispatch)
+const mapStatetoProps = store =>({
+    ProPicURL: store.userState.profilePicURL,
+})
+
+export default connect (mapStatetoProps, mapDispatch)(RootTabs);
 
 const HomeStack = createStackNavigator();
 const ExploreStack = createStackNavigator();

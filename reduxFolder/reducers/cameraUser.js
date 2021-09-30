@@ -4,6 +4,7 @@ import {SET_IMAGE, DISPLAY_IMAGE, RESET_IMAGE, FILL} from '../constants/index';
 const initialState = {
     image: 'https://png.pngtree.com/png-vector/20191101/ourmid/pngtree-male-avatar-simple-cartoon-design-png-image_1934458.jpg',
     testString: 'testing123',
+    previewImage: '',
 }
 
 export const cameraReducer = (state = initialState, action) =>{

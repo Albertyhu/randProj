@@ -19,18 +19,25 @@ import {fetchUser} from './reduxFolder/actions/index';
 
 import Explore from './screens/explore.js';
 import RootGuest from './screens/RootGuest.js';
-import {RootTabs} from './screens/RootTabs.js';
+import RootTabs from './screens/RootTabs.js';
 import Loading from './screens/loading.js';
-import {DrawerContent} from './screens/DrawerContent.js';
+import DrawerContent from './screens/DrawerContent.js';
 import EditProfile from './screens/EditProfile.js';
 import Add from './screens/add.js';
 import previewCamera from './screens/previewCamera.js';
+import SampleForm from './screens/sampleform.js';
+import Save from './screens/save1.js';
+
 
 const store = createStore(RootReducer, applyMiddleware(thunk))
+
+//Can't use the following block of code for accessing and connecting to redux store
+//That's why on the tutorial, main.js is used  to connect to the app.
 const mapDispatchProps = (dispatch) => bindActionCreators({fetchUser}, dispatch)
 const mapStateToProps = (store) => ({
    currentUser: store.userState.currentUser
 })
+
 const Stack = createStackNavigator();
 const EditStack = createStackNavigator();
 
@@ -53,7 +60,7 @@ var firebaseConfig = {
 
 const Drawer = createDrawerNavigator();
 
-export default function App() {
+function App() {
 
 const initialData = {
     email: '',
@@ -144,6 +151,7 @@ setTimeout(async () =>{
     })
     setLoading(false);
     }, 2000)
+
 }, [])
 
   return (
@@ -161,11 +169,11 @@ setTimeout(async () =>{
             }}/>
             <Drawer.Screen name = 'EditProfile' component = {EditStackScreen} options ={{
                 headerShown: false,
+
              }}/>
             <Drawer.Screen name = 'AddProfile' component = {AddStackScreen} options ={{
                  headerShown: false,
               }}/>
-
         </Drawer.Navigator>
 
     : <RootGuest />
@@ -177,7 +185,7 @@ setTimeout(async () =>{
   );
 }
 
-connect(mapStateToProps, mapDispatchProps)(App);
+ export default App;
 
 const EditStackScreen = ({navigation}) =>{
 return(
@@ -222,6 +230,26 @@ return(
            style = {styles.iosMenu}
        />,
     }} />
+        <AddStack.Screen name = 'SampleForm' component = {SampleForm} options ={{
+           title: "Sample Form",
+           headerLeft: () => <Icon.Button
+               name = 'ios-menu'
+               color = '#000'
+               size = {25}
+               onPress = {() => navigation.openDrawer()}
+               style = {styles.iosMenu}
+           />,
+        }} />
+        <AddStack.Screen name = 'Save' component = {Save} options ={{
+           title: "Save Photo",
+           headerLeft: () => <Icon.Button
+               name = 'ios-menu'
+               color = '#000'
+               size = {25}
+               onPress = {() => navigation.openDrawer()}
+               style = {styles.iosMenu}
+           />,
+        }} />
 </AddStack.Navigator>
 )
 }
