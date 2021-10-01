@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {openDrawer} from '@react-navigation/drawer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchUser, setName, fetchProfilePic, setProfilePic } from '../reduxFolder/actions/index.js';
+import { fetchUser, setName, fetchProfilePic, setProfilePic, fetchUserPosts } from '../reduxFolder/actions/index.js';
 
 import Home from './home.js';
 import Explore from './explore.js';
@@ -29,11 +29,11 @@ const ProfileBarColor = () =>{
 return '#A8E6CF'
 }
 
-const RootTabs = ({fetchUser, setName, fetchProfilePic, setProfilePic,  ProPicURL}) =>{
+const RootTabs = ({fetchUser, setName, fetchProfilePic, setProfilePic,  ProPicUR, fetchUserPosts}) =>{
 useEffect(()=>{
     fetchUser();
     setName();
-
+    fetchUserPosts();
     //stores the download URL of profile pic into redux store
     setProfilePic();
 }, [])
@@ -64,7 +64,7 @@ return (
 )
 }
 
-const mapDispatch = (dispatch) => bindActionCreators({fetchUser, setName, fetchProfilePic, setProfilePic}, dispatch)
+const mapDispatch = (dispatch) => bindActionCreators({fetchUser, setName, fetchProfilePic, setProfilePic, fetchUserPosts}, dispatch)
 const mapStatetoProps = store =>({
     ProPicURL: store.userState.profilePicURL,
 })

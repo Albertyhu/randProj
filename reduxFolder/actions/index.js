@@ -47,19 +47,20 @@ export function fetchUserPosts() {
         .orderBy('creationDate', 'asc')
         .get()
         .then((snapshot) =>{
-            const posts = snapshot.doc.map( doc =>{
+            //notice that docs is plural in the following line
+            const posts = snapshot.docs.map( doc =>{
                 const data = doc.data();
                 const id = doc.id;
+//                console.log(data.likes)
                 return{id, ...data}
             }
         )
-             dispatch({type: SET_POSTS, post: snapshot})
+             dispatch({type: SET_POSTS, post: posts})
          })
-
-
     })
 }
 
+//stores username into redux store
 export function setName(){
         return ((dispatch) => {
             firebase.firestore()
@@ -96,13 +97,6 @@ export const reset = () =>{
     dispatch({type: RESET_IMAGE})
     }
     )
-}
-
-export const fill = () => {
-
-    return((dispatch) =>{
-        dispatch({type: "FILL", text: "This is an example"})
-    })
 }
 
 //value of key will be a string
