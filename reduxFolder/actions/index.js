@@ -12,6 +12,8 @@ SET_NAME,
 SET_POSTS,
 SET_PROFILEPIC,
 SET_PROFILEPICURL,
+VISIT_PROFILE,
+FETCH_FOLLOWERS,
 } from '../constants/index'
 
 import firebase from 'firebase'
@@ -23,13 +25,14 @@ require('firebase/firebase-storage')
 
 export function fetchUser() {
     return ((dispatch) => {
+        const userID = firebase.auth().currentUser.uid;
         firebase.firestore()
             .collection("users")
             .doc(firebase.auth().currentUser.uid)
             .get()
             .then((snapshot) => {
                 if (snapshot.exists) {
-                    dispatch({ type: FILL, name: snapshot.data().name, mail: snapshot.data().email, currentUser: snapshot.data() })
+                    dispatch({ type: FILL, name: snapshot.data().name, mail: snapshot.data().email, currentUser: snapshot.data(), id: userID})
                 }
                 else {
                     console.log('does not exist')
@@ -153,4 +156,28 @@ export function setProfilePic(){
         })
         }
     )
+}
+
+//Temporary function for identifying the profile to be visited
+export function Visit_ProfileID(val){
+    return(dispatch => {
+        dispatch({type: VISIT_PROFILE, id: val})
+    })
+}
+
+export function SetFollowers(){
+    return(dispatch =>{
+        firebase.firestore()
+        .collection('following')
+        .doc(firebase.auth().currentUser.uid)
+        .collection('CurrentlyFollowing')
+        .get()
+        .then(snapshot =>{
+            const allFollowers = snapshot.docs.map(doc =>{
+                const id = doc.id;
+                return{id}
+            })
+            dispatch({type: FETCH_FOLLOWERS, followerArray: allFollowers, })
+        })
+    })
 }

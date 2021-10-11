@@ -21,6 +21,7 @@ import Explore from './explore.js';
 import Profile from './profile.js';
 import EditProfile from './EditProfile.js';
 import AddProfile from './add.js';
+import Search from './search.js';
 
 function DrawerContent(props){
     const {ProPicURL, username, email } = props;
@@ -40,13 +41,10 @@ function DrawerContent(props){
 return(
 <DrawerContentScrollView {...props}>
     <Drawer.Section>
-    {ProPicURL ?
-        <Image
-            source = {{uri: ProPicURL}}
-            style = {styles.image}
-        />
-        : <View></View>
-     }
+    <Image
+        source = {ProPicURL ? {uri: ProPicURL}  : {uri: 'https://www.pngkey.com/png/full/115-1150420_avatar-png-pic-male-avatar-icon-png.png'}}
+        style = {styles.image}
+    />
       <View style = {[styles.row, {marginLeft: 20}]}>
           <Text style = {{fontWeight: 'bold'}}>User: </Text>
           <Text>{username}</Text>
@@ -87,6 +85,12 @@ return(
             label = {({focused, color }) => <Text style = {{color: '#000' }}>Add</Text> }
             onPress = {() => props.navigation.navigate('AddProfile')}
             icon = {({color, size}) => <Icon name = 'add-outline' color = '#000' size = {size} />}
+        />
+        <DrawerItem
+            label = {({focused, color }) => <Text style = {{color: '#000' }}>Search</Text> }
+            navigation={props.navigation}
+            onPress = {() => props.navigation.navigate('Search')}
+            icon = {({color, size}) => <Icon name = 'search-outline' color = '#000' size = {size} />}
         />
     </Drawer.Section>
     <Divider />

@@ -19,3 +19,5 @@ export const SET_POSTS = 'SET_POSTS';
 //sets profile picture by having redux store the pictures unique ID
 export const SET_PROFILEPIC = 'SET_PROFILEPIC';
 export const SET_PROFILEPICURL = 'SET_PROFILEPICURL';
+export const VISIT_PROFILE = 'VISIT_PROFILE';
+export const FETCH_FOLLOWERS = 'FETCH_FOLLOWERS';

@@ -1,0 +1,22 @@
+import React, {useState, useEffect} from 'react';
+import {View, StyleSheet, Text, TextInput, Image, ImageBackground, TouchableOpacity } from 'react-native';
+
+const App = () =>{
+return(
+    <View style = {styles.container}>
+
+    </View>
+)
+}
+
+export default App;
+
+
+const styles = StyleSheet.create({
+    container:{
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex: 1,
+    },
+
+})

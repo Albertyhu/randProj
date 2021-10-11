@@ -24,7 +24,10 @@ const navigation = useNavigation();
 
 const uploadPhoto = async () =>{
     const childPath = `users/${firebase.auth().currentUser.uid}/example/profilePic`;
+
+    //This function stores the path of the profile pic file into firestore, which can be retrieved later when the app boots up.
     setProfilePicPath(childPath);
+
    // const uri = props.route.params.image;
    setLoading(true);
    const uri = PImage;

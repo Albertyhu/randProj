@@ -27,7 +27,8 @@ import Add from './screens/add.js';
 import previewCamera from './screens/previewCamera.js';
 import SampleForm from './screens/sampleform.js';
 import Save from './screens/save1.js';
-
+import Search from './screens/search.js';
+import SStack from './screens/SearchStack.js';
 
 const store = createStore(RootReducer, applyMiddleware(thunk))
 
@@ -60,7 +61,9 @@ var firebaseConfig = {
 
 const Drawer = createDrawerNavigator();
 
-function App() {
+function App(props) {
+
+const {navigation} = props;
 
 const initialData = {
     email: '',
@@ -174,6 +177,13 @@ setTimeout(async () =>{
             <Drawer.Screen name = 'AddProfile' component = {AddStackScreen} options ={{
                  headerShown: false,
               }}/>
+            <Drawer.Screen
+                name = 'Search'
+                component = {SStack}
+                navigation = {navigation}
+                options = {{
+                    headerShown: false,
+                }}/>
         </Drawer.Navigator>
 
     : <RootGuest />
@@ -251,6 +261,28 @@ return(
            />,
         }} />
 </AddStack.Navigator>
+)
+}
+
+const SearchStack = createStackNavigator();
+
+const SearchStackScreen = ({route, navigation}) =>{
+return(
+<SearchStack.Navigator>
+    <SearchStack.Screen name = 'SearchStack'
+    component = {Search}
+
+    options ={{
+         title: "Preview Image",
+         headerLeft: () => <Icon.Button
+             name = 'ios-menu'
+             color = '#000'
+             size = {25}
+             onPress = {() => navigation.openDrawer()}
+             style = {styles.iosMenu}
+         />,
+      }}/>
+</SearchStack.Navigator>
 )
 }
 

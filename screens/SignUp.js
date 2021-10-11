@@ -8,9 +8,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import firebase from 'firebase';
 require('firebase/auth')
 
-
-import "firebase/auth";
-
 import {SocialButton} from '../component/SocialIcon.js';
 import {createNewAccount, sendEmailVerification} from '../component/tokenGenerator.js';
 import Home from './home.js';
@@ -112,7 +109,6 @@ function validatePassword (){
 const createAccount = () =>{
     if(data.hasName){
     if(data.isValid && data.passValid){
-        alert('Account created!')
         firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
           .then((userCredential) => {
             // Signed in
@@ -123,10 +119,12 @@ const createAccount = () =>{
                 email: data.email,
             })
             var user = userCredential.user;
+            alert('Account created!')
           })
           .catch((error) => {
             var errorCode = error.code;
             var errorMessage = error.message;
+            console.log(error.message)
             // ..
           });
 

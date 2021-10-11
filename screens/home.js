@@ -2,7 +2,7 @@ import React, {useEffect, Fragment, useMemo} from 'react';
 import {View, StyleSheet, Text, Image, ImageBackground, Button, TouchableOpacity} from 'react-native'
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchUser, clearData, fetchProfilePic } from '../reduxFolder/actions/index.js';
+import { fetchUser, clearData, fetchProfilePic, setProfilePic } from '../reduxFolder/actions/index.js';
 import {AuthContext} from '../component/AuthContext.js';
 import * as Animated from 'react-native-animatable';
 
@@ -42,7 +42,7 @@ const { ProPicURL } = this. props;
         <View style = {styles.container}>
         <Animated.Text
             animation = 'bounce'
-            iterationcount = 'infinite'
+            iterationCount = 'infinite'
         >
         Loading...
         </Animated.Text>
@@ -59,7 +59,12 @@ const  profilePic = async () =>{
     .child(ProPicPath)
     .getDownloadURL()
     .then(snapshot=>{
+        if(snapshot.exists){
          this.setState({ profilepicurl: snapshot});
+         }
+         else{
+            console.log('Profile picture does not exist.')
+         }
     })
 }
 
@@ -71,7 +76,7 @@ return(
     <View style = {styles.container}>
         <Text>Welcome back, {currentUser.name}</Text>
         <Image
-            source = { ProPicURL ? {uri: ProPicURL } : null}
+            source = { ProPicURL ? {uri: ProPicURL } : {uri: 'https://www.pngkey.com/png/full/115-1150420_avatar-png-pic-male-avatar-icon-png.png'}}
             style = {styles.image}
         />
     </View>
@@ -87,7 +92,7 @@ const mapStateToProps = (val) =>({
 })
 //replaced 'store' with val
 
-const mapDispatchToProps = (val) => bindActionCreators({fetchUser, clearData, fetchProfilePic}, val)
+const mapDispatchToProps = (val) => bindActionCreators({fetchUser, clearData, fetchProfilePic, setProfilePic}, val)
 //replaced 'dispatch' with val
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
