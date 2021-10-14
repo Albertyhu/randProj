@@ -20,6 +20,7 @@ import firebase from 'firebase';
 import Home from './home.js';
 import Explore from './explore.js';
 import Profile from './profile.js';
+import Feed from './feed.js';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -36,13 +37,17 @@ const ProfileBarColor = () =>{
 return '#A8E6CF'
 }
 
+const FeedBarColor = () =>{
+return '#34E5FF'
+}
+
 const RootTabs = (props) =>{
 const {fetchUser, setName, fetchProfilePic, setProfilePic,  ProPicUR, fetchUserPosts, Visit_ProfileID, SetFollowers} = props;
 const { navigation } = props;
 useEffect(()=>{
     fetchUser();
-    setName();
     fetchUserPosts();
+//    fetchProfilePic();
     //stores the download URL of profile pic into redux store
     setProfilePic();
     SetFollowers();
@@ -79,6 +84,11 @@ return (
             tabBarLabel: 'Profile',
             tabBarIcon: ({color}) => <Icon name = 'ios-person' color = {color} size = {25} />
         }}/>
+        <Tab.Screen name = 'Feed' component = {FeedStackScreen} options = {{
+            tabBarColor: FeedBarColor(),
+            tabBarLabel: 'Conversation',
+            tabBarIcon: ({color}) => <Icon name = 'chatbubbles-outline' color = {color} size = {25} />
+        }}/>
     </Tab.Navigator>
 )
 }
@@ -100,11 +110,13 @@ export default connect (mapStatetoProps, mapDispatch)(RootTabs);
 const HomeStack = createStackNavigator();
 const ExploreStack = createStackNavigator();
 const ProfileStack = createStackNavigator();
+const FeedStack = createStackNavigator();
 
 const HomeStackScreen = ({navigation}) =>{
 return(
 <HomeStack.Navigator screenOptions = {{
-    headerStyle: {backgroundColor: '#00AAFF'}
+    headerStyle: {backgroundColor: '#00AAFF'},
+    headerTitleStyle: {color: '#fff',},
 }}>
     <HomeStack.Screen name = 'HomeStack' component = {Home} options = {{
         title: 'Home',
@@ -117,7 +129,8 @@ return(
 const ProfileStackScreen = ({navigation}) =>{
 return(
 <ProfileStack.Navigator screenOptions = {{
-    headerStyle: {backgroundColor: '#A8E6CF'}
+    headerStyle: {backgroundColor: '#A8E6CF'},
+    headerTitleStyle: {color: '#fff',},
 }}>
     <ProfileStack.Screen name = 'HomeStack' component = {Profile} options = {{
         title: 'Profile',
@@ -130,13 +143,28 @@ return(
 const ExploreStackScreen = ({navigation}) =>{
 return(
 <ExploreStack.Navigator screenOptions = {{
-    headerStyle: {backgroundColor: '#FBB40C'}
+    headerStyle: {backgroundColor: '#FBB40C'},
+    headerTitleStyle: {color: '#fff',},
 }}>
     <ExploreStack.Screen name = 'HomeStack' component = {Explore} options = {{
         title: 'Explore',
         headerLeft: () => <Icon.Button name = 'ios-menu' color = '#fff' backgroundColor = '#FBB40C' size = {25} onPress = {() => navigation.openDrawer()} />
     }} />
 </ExploreStack.Navigator>
+)
+}
+
+const FeedStackScreen = ({navigation}) =>{
+return(
+<FeedStack.Navigator screenOptions = {{
+    headerStyle: {backgroundColor: '#34E5FF',},
+    headerTitleStyle: {color: '#fff',},
+}}>
+    <FeedStack.Screen name = 'FeedStack' component = {Feed} options = {{
+        title: 'Conversation Feed',
+        headerLeft: () => <Icon.Button name = 'ios-menu' color = '#fff' backgroundColor = '#34E5FF' size = {25} onPress = {() => navigation.openDrawer()} />
+    }} />
+</FeedStack.Navigator>
 )
 }
 

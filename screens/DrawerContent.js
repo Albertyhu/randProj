@@ -22,6 +22,7 @@ import Profile from './profile.js';
 import EditProfile from './EditProfile.js';
 import AddProfile from './add.js';
 import Search from './search.js';
+import Feed from './feed.js';
 
 function DrawerContent(props){
     const {ProPicURL, username, email } = props;
@@ -76,6 +77,13 @@ return(
          activeTintColor = '#fff'
          style = {styles.drawerItem}
          />
+      <DrawerItem
+           label = {({focused, color }) => <Text style = {{color: '#000' }}>Posts Feed</Text> }
+           onPress = {()=> props.navigation.navigate('Feed')}
+           icon = {({color, size }) => <Icon name = 'chatbubbles-outline' size = {size} color = {color} />}
+           activeTintColor = '#fff'
+           style = {styles.drawerItem}
+           />
       <DrawerItem
           label = {({focused, color }) => <Text style = {{color: '#000' }}>Edit</Text> }
           onPress = {() => props.navigation.navigate('EditProfile')}

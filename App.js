@@ -141,8 +141,8 @@ firebase.auth().onAuthStateChanged((user) => {
 }
 
 useEffect(()=>{
-setTimeout(async () =>{
-    await firebase.auth().onAuthStateChanged((user) => {
+
+    firebase.auth().onAuthStateChanged((user) => {
         if(!user){
             setLog(false);
 
@@ -152,9 +152,7 @@ setTimeout(async () =>{
 
         }
     })
-    setLoading(false);
-    }, 2000)
-
+    setTimeout(()=>{setLoading(false);}, 2000)
 }, [])
 
   return (

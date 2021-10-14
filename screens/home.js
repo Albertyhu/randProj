@@ -1,5 +1,5 @@
-import React, {useEffect, Fragment, useMemo} from 'react';
-import {View, StyleSheet, Text, Image, ImageBackground, Button, TouchableOpacity} from 'react-native'
+import React, {useEffect, Fragment, useMemo, useState} from 'react';
+import {View, StyleSheet, Text, Image, ImageBackground, Button, TouchableOpacity, ActivityIndicator} from 'react-native'
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchUser, clearData, fetchProfilePic, setProfilePic } from '../reduxFolder/actions/index.js';
@@ -15,21 +15,18 @@ constructor(props){
     super(props);
     this.state = {
         profilepicurl: '',
+        display: false,
     };
 
 }
 
 componentDidMount(){
-  //  this.props.fetchUser();
-
- //9/29/21: The following is no longer in use since I changed the way profile pic is fetched
- // this.props.fetchProfilePic();
+    this.setState({
+        display: true})
 }
 
 render(){
 const { currentUser } = this.props;
-const { ProPicURI } = this.props;
-const { ProPicPath } = this.props;
 const { ProPicURL } = this. props;
 
    //fetchProfilePic(currentUser.name);
@@ -46,6 +43,7 @@ const { ProPicURL } = this. props;
         >
         Loading...
         </Animated.Text>
+        <ActivityIndicator size = 'large' color = '#000' />
         </View>
     )
     }
@@ -53,6 +51,7 @@ const { ProPicURL } = this. props;
 //Using the path information for the profile pic that is acquired in the save1.js file, this function retrieves download URL for the profile pic
 //With the downloadURL, use the Image component to display it with source{{uri: downloadURL}}
 //This no longer is in use since I changed the function to retrieve both the path of the pic and its download url, which is now stored in redux.
+/*
 const  profilePic = async () =>{
     await firebase.storage()
     .ref()
@@ -67,18 +66,20 @@ const  profilePic = async () =>{
          }
     })
 }
-
-//no longer in use
-//  profilePic();
+*/
 
 return(
-
+this.state.display ?
     <View style = {styles.container}>
         <Text>Welcome back, {currentUser.name}</Text>
         <Image
-            source = { ProPicURL ? {uri: ProPicURL } : {uri: 'https://www.pngkey.com/png/full/115-1150420_avatar-png-pic-male-avatar-icon-png.png'}}
+            source = {ProPicURL ? {uri: ProPicURL } : {uri: 'https://www.pngkey.com/png/full/115-1150420_avatar-png-pic-male-avatar-icon-png.png'}}
             style = {styles.image}
         />
+    </View>
+    :
+    <View style = {styles.container}>
+        <ActivityIndicator size = 'large' color = '#000' />
     </View>
 )
 }
@@ -86,8 +87,6 @@ return(
 
 const mapStateToProps = (val) =>({
        currentUser: val.userState.currentUser,
-       ProPicPath: val.userState.profilePicPath,
-       ProPicURI: val.cameraR.image,
        ProPicURL: val.userState.profilePicURL,
 })
 //replaced 'store' with val

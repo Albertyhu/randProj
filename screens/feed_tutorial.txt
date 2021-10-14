@@ -1,0 +1,56 @@
+const fetchUserFollowing = () =>{
+    firebase.firestore()
+    .collection('following')
+    .doc(firebase.auth().currentUser.uid)
+    .collection("followingUsers")
+    .get()
+    .then(snapshot => {
+        let followers = snapshot.docs.map(doc =>
+        const id = doc.id;
+        return({id})
+        )
+    })
+    dispatch({type: FETCH_FOLLOWERS, follwerArray: followers})
+    for(var i = 0; i < followers.length; i++){
+        fetchUserFollowingPosts(followers[i])
+     }
+}
+
+const setUsersFollowing = uid => {
+    const found = getState().users.users.find(el => el.uid === uid)
+    if(!found){
+     firebase.firestore()
+    .collection('users')
+    .doc(uid)
+    .get()
+    .then(snapshot => {
+        const user = snapshot.data();
+        user.uid = snapshot.id;
+        dispatch({type: ADD_TARGET, user: user});
+    })
+    dispatch(fetchUserFollowingPosts(uid));
+    }
+
+}
+
+const fetchUserFollowingPosts = (uid) =>{
+    firebase.firestore()
+    .collection('posts')
+    .doc(uid)
+    .collection('userPosts')
+    .orderBy('creationDate', 'asc')
+    .get()
+    .then(snapshot =>{
+        const uid = /*need to look up*/
+        const user = getState().users.user.find(el => el.uid === uid)
+
+        const allPosts = snapshot.map(doc =>{
+            const data = doc.data();
+            const id = doc.id;
+            return({...data, id})
+        })
+
+        dispatch({type: COLLECT_TARGET_POSTS, posts: allPosts})
+    })
+
+}

@@ -1,7 +1,6 @@
 import { USER_STATE_CHANGE,
 USER_POSTS_STATE_CHANGE,
 USER_FOLLOWING_STATE_CHANGE,
-USERS_DATA_STATE_CHANGE,
 USERS_POSTS_STATE_CHANGE,
 USERS_LIKES_STATE_CHANGE,
 CLEAR_DATA,
@@ -14,6 +13,8 @@ SET_PROFILEPIC,
 SET_PROFILEPICURL,
 VISIT_PROFILE,
 FETCH_FOLLOWERS,
+ADD_TARGET,
+COLLECT_TARGET_POSTS,
 } from '../constants/index'
 
 import firebase from 'firebase'
@@ -50,6 +51,7 @@ export function fetchUserPosts() {
         .orderBy('creationDate', 'asc')
         .get()
         .then((snapshot) =>{
+        if(snapshot.exists){
             //notice that docs is plural in the following line
             const posts = snapshot.docs.map( doc =>{
                 const data = doc.data();
@@ -57,13 +59,19 @@ export function fetchUserPosts() {
 //                console.log(data.likes)
                 return{id, ...data}
             }
-        )
+         )
              dispatch({type: SET_POSTS, post: posts})
-         })
+         }
+         else{
+             console.log('User posts do not exist.')
+         }
+         }
+         )
     })
 }
 
 //stores username into redux store
+//This is not necessary since fetchUser() already accomplishes this
 export function setName(){
         return ((dispatch) => {
             firebase.firestore()
@@ -141,13 +149,18 @@ export function setProfilePic(){
         .doc(firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
-            if(snapshot.exists){
+            if(snapshot.data().profilePicPath != undefined){
                 firebase.storage()
                 .ref()
                 .child(snapshot.data().profilePicPath)
                 .getDownloadURL()
                 .then(snapshot =>{
-                    dispatch({type: SET_PROFILEPICURL, url: snapshot})
+                    if(snapshot != undefined){
+                      dispatch({type: SET_PROFILEPICURL, url: snapshot})
+                    }
+                    else{
+                        console.log('Profile pic has not been uploaded yet.')
+                    }
                 })
                 }
             else{
@@ -171,13 +184,53 @@ export function SetFollowers(){
         .collection('following')
         .doc(firebase.auth().currentUser.uid)
         .collection('CurrentlyFollowing')
-        .get()
-        .then(snapshot =>{
+        .onSnapshot(snapshot =>{
             const allFollowers = snapshot.docs.map(doc =>{
                 const id = doc.id;
                 return{id}
             })
-            dispatch({type: FETCH_FOLLOWERS, followerArray: allFollowers, })
+            dispatch({type: FETCH_FOLLOWERS, followerArray: allFollowers, });
+            for(let i = 0; i < allFollowers.length; i++){
+                dispatch(AddFollowerToList(allFollowers[i].id))
+            }
+
         })
     })
 }
+
+//Adds the target profile to the redux store list of profiles, which will be used later to display users' posts onto a feed
+export function AddFollowerToList(uid){
+    return((dispatch, getState) =>{
+        //first, check to see if the target profile is already in the redux store list
+        // If found is undefined, run th next block of code
+        const found = getState().usersState.users.find(val => val.uid === uid)
+        if(!found){
+            firebase.firestore()
+            .collection('users')
+            .doc(uid)
+            .get()
+            .then(snapshot =>{
+                if(snapshot.exists){
+                     const targetUser = snapshot.data();
+                     targetUser.uid = snapshot.id;
+                    dispatch({type: ADD_TARGET, user: targetUser})
+                }
+                else{
+                    console.log('User does not exist')
+                }
+            })
+        }
+    })
+}
+/*
+export function CollectTargetPosts(uid){
+    firebase.firestore()
+    .collection('posts')
+    .doc(uid)
+    .collection('userPosts')
+    .orderBy('creationDate', 'asc')
+    .get()
+    .then(snapshot =>{
+        console.log(snapshot)
+    })
+}*/
