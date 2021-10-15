@@ -118,6 +118,7 @@ const context = React.useMemo(()=>({
 
 }))
 
+/*
 const Direct = () =>{
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
@@ -139,17 +140,16 @@ firebase.auth().onAuthStateChanged((user) => {
   }
 });
 }
+*/
 
 useEffect(()=>{
 
     firebase.auth().onAuthStateChanged((user) => {
         if(!user){
             setLog(false);
-
         }
         else{
             setLog(true);
-
         }
     })
     setTimeout(()=>{setLoading(false);}, 2000)

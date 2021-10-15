@@ -21,6 +21,7 @@ const Add = ({navigation, previewImage, test, setCameraImage, setPrevImage}) =>{
 //the camera stops running.
 const isFocused = useIsFocused();
 const [cameraPermission, setCameraPermission ] = React.useState(null)
+const [libraryPermission, setLibraryPermission ] = React.useState(null)
 const [ microphonePermission, setMicrophonePermission ] = React.useState(null);
 const [cameraType, setType ] = React.useState(Camera.Constants.Type.front);
 const [image, setImage] = React.useState(null);
@@ -47,6 +48,14 @@ useEffect(()=>{
      } catch(e){
           console.log(e.message)
      }
+     try{
+      (async ()=>{
+        const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync()
+        setLibraryPermission(status === 'granted')
+        })();
+       } catch(e){
+          console.log(e.message)
+      }
 }, [])
 
 useEffect(()=>{
@@ -150,6 +159,22 @@ const isLoading = () =>{
     }, 1000)
 }
 
+//Allow user to upload images from his library
+const launchImageLibrary = async () =>{
+   let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    setCameraImage(result.uri);
+    setImage(result.uri)
+    //navigation.navigate('Save', {image});
+    navigation.navigate('Save');
+}
+
+
 //const {test} = props;
    if(test === null){
     return(
@@ -195,6 +220,16 @@ return(
         </TouchableOpacity>
     </View>
     <View style = {styles.buttonContainer}>
+        <TouchableOpacity onPress = {launchImageLibrary}>
+            <View style = {styles.button}>
+            <Text style = {{
+                color: '#fff',
+                padding: 5,
+            }}>Upload from Library</Text>
+            </View>
+        </TouchableOpacity>
+    </View>
+    <View style = {styles.buttonContainer}>
         <TouchableOpacity onPress = {toggleFlip}>
             <View style = {styles.button}>
             <Text style = {{
@@ -214,7 +249,7 @@ return(
             </View>
         </TouchableOpacity>
     </View>
-    <Text>Message: {test}</Text>
+
 {/*image &&
 <ImageBackground
     source = {{uri: image}}

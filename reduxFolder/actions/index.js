@@ -4,6 +4,7 @@ USER_FOLLOWING_STATE_CHANGE,
 USERS_POSTS_STATE_CHANGE,
 USERS_LIKES_STATE_CHANGE,
 CLEAR_DATA,
+CLEAR_USERS_DATA,
 RESET_IMAGE,
 FILL,
 SET_IMAGE,
@@ -89,9 +90,17 @@ export function setName(){
         })
 }
 
-export function clearData(){
+//clears data about individual user
+export function clearUserData(){
     return ((dispatch) => {
         dispatch({ type: CLEAR_DATA })
+    })
+}
+
+//clears users data
+export function clearUsersStateData(){
+    return ((dispatch) => {
+        dispatch({ type: CLEAR_USERS_DATA })
     })
 }
 
@@ -142,6 +151,7 @@ export function fetchProfilePic(){
     )
 }
 
+//Note: When retrieving data from firebase storage, snapshot.exist doesn't work. It returns undefined.
 export function setProfilePic(){
     return((dispatch) =>{
         firebase.firestore()
@@ -178,9 +188,13 @@ export function Visit_ProfileID(val){
     })
 }
 
+//There is an error that shows up when user logs out.
+//Uncaught Error in snapshot listener:, [FirebaseError: Missing or insufficient permissions.]
+//This is caused by the fact that the app has not detached the onSnapshot listener
+/*
 export function SetFollowers(){
     return(dispatch =>{
-        firebase.firestore()
+        var unsubscribe = firebase.firestore()
         .collection('following')
         .doc(firebase.auth().currentUser.uid)
         .collection('CurrentlyFollowing')
@@ -193,7 +207,36 @@ export function SetFollowers(){
             for(let i = 0; i < allFollowers.length; i++){
                 dispatch(AddFollowerToList(allFollowers[i].id))
             }
+        }, error=>{
+            console.log('onSnapshot Error in SetFollowers: ')
+            console.log(error);
+        })
 
+      //this method doesn't work to detach the onSnapshot listener.
+        unsubscribe();
+    })
+}
+*/
+
+//Alternative version of SetFollwers()
+//This time, it doesn't use the onSnapshot method and instead uses get() to retrieve the necessary data
+//The error "missing permissions" caused by the onSnapshot listener not being detached no longer occurs when the user signs out.
+export function SetFollowers(){
+    return(dispatch =>{
+        firebase.firestore()
+        .collection('following')
+        .doc(firebase.auth().currentUser.uid)
+        .collection('CurrentlyFollowing')
+        .get()
+        .then(snapshot =>{
+            const allFollowers = snapshot.docs.map(doc =>{
+                const id = doc.id;
+                return{id}
+            })
+            dispatch({type: FETCH_FOLLOWERS, followerArray: allFollowers, });
+            for(let i = 0; i < allFollowers.length; i++){
+                dispatch(AddFollowerToList(allFollowers[i].id))
+            }
         })
     })
 }

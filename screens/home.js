@@ -21,8 +21,9 @@ constructor(props){
 }
 
 componentDidMount(){
-    this.setState({
+    setTimeout(()=>{this.setState({
         display: true})
+        }, 5000)
 }
 
 render(){

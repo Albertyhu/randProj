@@ -14,7 +14,7 @@ import firebase from 'firebase';
 require ('firebase/auth');
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setName, fetchUser } from '../reduxFolder/actions/index.js';
+import { setName, fetchUser, clearUserData, clearUsersStateData} from '../reduxFolder/actions/index.js';
 
 import Home from './home.js';
 import Explore from './explore.js';
@@ -27,10 +27,13 @@ import Feed from './feed.js';
 function DrawerContent(props){
     const {ProPicURL, username, email } = props;
     const SignOut = () =>{
+      clearUserData();
+      clearUsersStateData();
         firebase.auth().signOut().then(() => {
           // Sign-out successful.
+
         }).catch((error) => {
-          // An error happened.
+          console.log(error.message);
         });
     }
 
@@ -130,7 +133,7 @@ row:{
 },
 })
 
-const mapDispatchtoProps = dispatch => bindActionCreators({setName, fetchUser}, dispatch);
+const mapDispatchtoProps = dispatch => bindActionCreators({setName, fetchUser, clearUserData, clearUsersStateData}, dispatch);
 
 const mapStatetoProps = store =>{
 return{

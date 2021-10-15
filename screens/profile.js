@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import firebase from 'firebase'
 import * as Animated from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {SetFollowers } from '../reduxFolder/actions/index.js';
 
 const renderItem = ({item}) => (
 <View style = {styles.containerImage}>
@@ -19,7 +20,7 @@ const renderItem = ({item}) => (
 )
 
 function Profile(props){
-    const { currentProfilePic, postArray, currentVisitingID, currentUserName, currentUserID, followingList} = props;
+    const { currentProfilePic, postArray, currentVisitingID, currentUserName, currentUserID, followingList, SetFollowers} = props;
 //Once the app checks which member's profile the current user is on, it fills the profile screen with the appropriate posts
 //The following block of was written initially to handle displaying the write photos
 //However, it's commented out because it doesn't work right. The photos keep switching back and forth between the photos of the current user
@@ -161,6 +162,9 @@ const onFollow = () =>{
        alert("You are now following " + snapshot.data().name)
     })
     setIsFollowing(true);
+
+    //this is necessary to update the posts on the conversation feed screen
+    SetFollowers();
 }
 
 const unFollow = () =>{
@@ -180,6 +184,9 @@ const unFollow = () =>{
     })
 
     setIsFollowing(false)
+
+    //The following doesn't work to remove posts from feed.
+    SetFollowers();
 }
 
 //If user is on a target profile, this method checks whether or not the current user is following the target profile.
@@ -293,7 +300,9 @@ const mapStatetoProps = store =>({
     followingList: store.userState.followers,
 })
 
-export default connect(mapStatetoProps, null)(Profile);
+const mapDispatchtoProps = dispatch => bindActionCreators({SetFollowers}, dispatch);
+
+export default connect(mapStatetoProps, mapDispatchtoProps)(Profile);
 
 const WinWidth = Dimensions.get('window').width;
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { USER_STATE_CHANGE, CLEAR_DATA, SET_NAME, SET_POSTS, SET_PROFILEPIC, SET_PROFILEPICURL, FILL, VISIT_PROFILE, FETCH_FOLLOWERS } from '../constants';
+import { USER_STATE_CHANGE, CLEAR_DATA, SET_NAME, SET_POSTS, SET_PROFILEPIC, SET_PROFILEPICURL, FILL, VISIT_PROFILE, FETCH_FOLLOWERS,  } from '../constants';
 
 const initialState = {
     currentUser: null,
@@ -17,13 +17,22 @@ const initialState = {
 
 export const user = (state = initialState, action) =>{
     switch(action.type){
-        case USER_STATE_CHANGE:
-            return{
-                ...state,
-                currentUser: action.currentUser,
-            }
+
          case CLEAR_DATA:
             return initialState;
+         case FETCH_FOLLOWERS:
+            return{
+                ...state,
+                followers: action.followerArray,
+            }
+         case FILL:
+            return{
+                ...state,
+                username: action.name,
+                email: action.mail,
+                currentUser: action.currentUser,
+                currentUserID: action.id,
+            }
          case SET_NAME:
             return{
                 ...state,
@@ -46,25 +55,17 @@ export const user = (state = initialState, action) =>{
                 ...state,
                 profilePicURL: action.url,
             }
-         case FILL:
-            return{
-                ...state,
-                username: action.name,
-                email: action.mail,
-                currentUser: action.currentUser,
-                currentUserID: action.id,
-
-            }
+         case USER_STATE_CHANGE:
+             return{
+                 ...state,
+                 currentUser: action.currentUser,
+             }
          case VISIT_PROFILE:
             return{
                 ...state,
                 profileVisitID: action.id,
             }
-         case FETCH_FOLLOWERS:
-            return{
-                ...state,
-                followers: action.followerArray,
-            }
+
          default:
             return state;
     }
