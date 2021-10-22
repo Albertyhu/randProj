@@ -12,7 +12,7 @@ return(
         <Text style = {{fontWeight: 'bold'}}>{item.creatorName}</Text>
         <Text style = {{fontStyle: 'italic'}}> replied on {item.datePosted.toDate().toDateString()}</Text>
     </View>
-        <Text style = {{fontStyle: 'italic'}}>{item.datePosted.toDate().toTimeString()}</Text>
+        <Text style = {{fontStyle: 'italic'}}>{item.datePosted.toDate().toTimeString().toString()}</Text>
         <Text>{item.comment}</Text>
     </View>
     )
@@ -130,12 +130,19 @@ return(
                 style = {styles.commentInput}
             />
         </KeyboardAvoidingView>
-        <TouchableOpacity style = {styles.buttonContainer} onPress = {handleSubmit}>
-            <View style = {styles.button}>
-                <Text style = {styles.buttonText}>Send</Text>
-            </View>
-        </TouchableOpacity>
+        <View style = {styles.buttonContainer}>
+            <TouchableOpacity onPress = {handleSubmit}>
+                <View style = {styles.button}>
+                    <Text style = {styles.buttonText}>Send</Text>
+                </View>
+            </TouchableOpacity>
 
+            <TouchableOpacity onPress = {() => props.navigation.goBack()}>
+                <View style = {styles.backButton}>
+                    <Text style = {styles.backButtonText}>Go Back</Text>
+                </View>
+            </TouchableOpacity>
+        </View>
 </View>
 )
 }
@@ -150,6 +157,21 @@ const WinWidth = Dimensions.get('window').width;
 const WinHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
+    backButton:{
+        borderRadius: 25,
+        alignItems: 'center',
+        flexDirection: 'row',
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#e0e0e0',
+    },
+    backButtonText:{
+        color: '#000',
+        fontSize: 20,
+        paddingLeft: 30,
+        paddingRight: 30,
+        paddingVertical: 5,
+    },
     button:{
         borderRadius: 25,
         alignItems: 'center',
@@ -160,7 +182,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 5,
         marginBottom: 10,
-
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignContent: 'space-between',
+        width: WinWidth,
     },
     buttonText:{
         color: '#fff',
