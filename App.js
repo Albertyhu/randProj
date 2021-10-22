@@ -29,6 +29,7 @@ import SampleForm from './screens/sampleform.js';
 import Save from './screens/save1.js';
 import Search from './screens/search.js';
 import SStack from './screens/SearchStack.js';
+import Comments from './screens/comments.js';
 
 const store = createStore(RootReducer, applyMiddleware(thunk))
 
@@ -280,6 +281,7 @@ return(
              style = {styles.iosMenu}
          />,
       }}/>
+
 </SearchStack.Navigator>
 )
 }

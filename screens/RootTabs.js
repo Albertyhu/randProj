@@ -14,13 +14,16 @@ fetchProfilePic,
 setProfilePic,
 fetchUserPosts,
 Visit_ProfileID,
-SetFollowers,} from '../reduxFolder/actions/index.js';
+SetFollowers,
+sortPosts,
+} from '../reduxFolder/actions/index.js';
 import firebase from 'firebase';
 
 import Home from './home.js';
 import Explore from './explore.js';
 import Profile from './profile.js';
 import Feed from './feed.js';
+import Comments from './comments.js';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -42,7 +45,7 @@ return '#34E5FF'
 }
 
 const RootTabs = (props) =>{
-const {fetchUser, setName, fetchProfilePic, setProfilePic,  ProPicUR, fetchUserPosts, Visit_ProfileID, SetFollowers} = props;
+const {fetchUser, setName, fetchProfilePic, setProfilePic,  ProPicUR, fetchUserPosts, Visit_ProfileID, SetFollowers, sortPosts} = props;
 const { navigation } = props;
 useEffect(()=>{
     fetchUser();
@@ -51,6 +54,7 @@ useEffect(()=>{
     //stores the download URL of profile pic into redux store
     setProfilePic();
     SetFollowers();
+    sortPosts();
 }, [])
 return (
     <Tab.Navigator
@@ -99,7 +103,8 @@ fetchProfilePic,
 setProfilePic,
 fetchUserPosts,
 Visit_ProfileID,
-SetFollowers}, dispatch)
+SetFollowers,
+sortPosts}, dispatch)
 
 const mapStatetoProps = store =>({
     ProPicURL: store.userState.profilePicURL,
@@ -111,6 +116,7 @@ const HomeStack = createStackNavigator();
 const ExploreStack = createStackNavigator();
 const ProfileStack = createStackNavigator();
 const FeedStack = createStackNavigator();
+const CommentsStack = createStackNavigator();
 
 const HomeStackScreen = ({navigation}) =>{
 return(
@@ -162,6 +168,11 @@ return(
 }}>
     <FeedStack.Screen name = 'FeedStack' component = {Feed} options = {{
         title: 'Conversation Feed',
+        headerLeft: () => <Icon.Button name = 'ios-menu' color = '#fff' backgroundColor = '#34E5FF' size = {25} onPress = {() => navigation.openDrawer()} />
+    }} />
+
+    <FeedStack.Screen name = 'Comments' component = {Comments} options = {{
+        title: 'Comments',
         headerLeft: () => <Icon.Button name = 'ios-menu' color = '#fff' backgroundColor = '#34E5FF' size = {25} onPress = {() => navigation.openDrawer()} />
     }} />
 </FeedStack.Navigator>

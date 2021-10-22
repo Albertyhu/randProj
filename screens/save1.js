@@ -94,7 +94,6 @@ firebase.firestore()
     setProfilePic();
     navigation.navigate('Home');
 })
-
 }
 
 return(

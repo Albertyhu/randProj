@@ -16,8 +16,9 @@ VISIT_PROFILE,
 FETCH_FOLLOWERS,
 ADD_TARGET,
 COLLECT_TARGET_POSTS,
+SET_TARGET_POSTS,
 } from '../constants/index'
-
+import React, {useState} from 'react';
 import firebase from 'firebase'
 require('firebase/firestore')
 require('firebase/database')
@@ -49,7 +50,7 @@ export function fetchUserPosts() {
         .collection('posts')
         .doc(firebase.auth().currentUser.uid)
         .collection('userPosts')
-        .orderBy('creationDate', 'asc')
+        .orderBy('creationDate', 'desc')
         .get()
         .then((snapshot) =>{
         if(snapshot.exists){
@@ -64,7 +65,7 @@ export function fetchUserPosts() {
              dispatch({type: SET_POSTS, post: posts})
          }
          else{
-             console.log('User posts do not exist.')
+            // console.log('User posts do not exist.')
          }
          }
          )
@@ -241,6 +242,15 @@ export function SetFollowers(){
     })
 }
 
+//This function removes a target profile from posts in redux store once the user unfollows the target profile
+//not finished
+export function removeTargetProfile(uid){
+    return((dispatch, getState)=>{
+        const newPost = getState().usersState.posts.filter(val =>val.userID != uid)
+        dispatch({type: SET_TARGET_POSTS, allPosts: newPost });
+    })
+}
+
 //Adds the target profile to the redux store list of profiles, which will be used later to display users' posts onto a feed
 export function AddFollowerToList(uid){
     return((dispatch, getState) =>{
@@ -248,7 +258,7 @@ export function AddFollowerToList(uid){
         // If found is undefined, run th next block of code
         const found = getState().usersState.users.find(val => val.uid === uid)
         if(!found){
-            firebase.firestore()
+             firebase.firestore()
             .collection('users')
             .doc(uid)
             .get()
@@ -256,24 +266,54 @@ export function AddFollowerToList(uid){
                 if(snapshot.exists){
                      const targetUser = snapshot.data();
                      targetUser.uid = snapshot.id;
-                    dispatch({type: ADD_TARGET, user: targetUser})
+                     targetUser.username = snapshot.data().name;
+                     dispatch({type: ADD_TARGET, user: targetUser})
+                     dispatch(CollectTargetPosts(uid, snapshot.data().name));
                 }
                 else{
                     console.log('User does not exist')
                 }
             })
+
         }
     })
 }
-/*
-export function CollectTargetPosts(uid){
+
+export function CollectTargetPosts(uid, username){
+return((dispatch, getState)=>{
+    //Collect posts
     firebase.firestore()
     .collection('posts')
     .doc(uid)
     .collection('userPosts')
-    .orderBy('creationDate', 'asc')
+    .orderBy('creationDate', 'desc')
     .get()
     .then(snapshot =>{
-        console.log(snapshot)
+        const post = snapshot.docs.map(doc =>{
+            const id = doc.id;
+            const userID = uid;
+            //The purpose of the following line is to display the name of the owner of the post in the feed page
+            const name = username;
+            const data = doc.data();
+            return({id, name, userID, ...data})
+        })
+        dispatch({type: COLLECT_TARGET_POSTS, allPosts: post})
     })
-}*/
+    })
+}
+
+//sorts the target profile's posts from the most recent to the latest
+export function sortPosts(){
+    return((dispatch, getState)=>{
+       var posts = getState().usersState.posts.map(val => {
+            const id = val.id;
+            const username = val.username;
+            const creationDate = new Date(val.creationDate.seconds * 1000 + val.creationDate.nanoseconds/1000000);
+        return({id, creationDate, username, ...val})
+       })
+       posts.sort(function(a, b){
+        return b.creationDate.seconds - a.creationDate.seconds;
+       })
+       dispatch({type: SET_TARGET_POSTS, allPosts: posts})
+    })
+}

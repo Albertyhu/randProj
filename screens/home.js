@@ -108,4 +108,9 @@ const styles = StyleSheet.create({
         height: 180,
         borderRadius: 180,
     },
+    imageModal:{
+        width: 180,
+        height: 180,
+        borderRadius: 180,
+    },
 })

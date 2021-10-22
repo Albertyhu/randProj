@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import firebase from 'firebase'
 import * as Animated from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {SetFollowers } from '../reduxFolder/actions/index.js';
+import {SetFollowers, removeTargetProfile } from '../reduxFolder/actions/index.js';
 
 const renderItem = ({item}) => (
 <View style = {styles.containerImage}>
@@ -20,7 +20,15 @@ const renderItem = ({item}) => (
 )
 
 function Profile(props){
-    const { currentProfilePic, postArray, currentVisitingID, currentUserName, currentUserID, followingList, SetFollowers} = props;
+    const { currentProfilePic,
+    postArray,
+    currentVisitingID,
+    currentUserName,
+    currentUserID,
+    followingList,
+    SetFollowers,
+    removeTargetProfile,
+    followedPosts} = props;
 //Once the app checks which member's profile the current user is on, it fills the profile screen with the appropriate posts
 //The following block of was written initially to handle displaying the write photos
 //However, it's commented out because it doesn't work right. The photos keep switching back and forth between the photos of the current user
@@ -185,7 +193,9 @@ const unFollow = () =>{
 
     setIsFollowing(false)
 
-    //The following doesn't work to remove posts from feed.
+    //After unfollowing the target profile, remove the target's post from redux store
+    if(currentVisitingID !== currentUserID)
+        removeTargetProfile(currentVisitingID);
     SetFollowers();
 }
 
@@ -215,17 +225,13 @@ firebase.firestore()
      }
 
      */
+
     followers.forEach(function(val){
         if(currentVisitingID === val.id){
             setIsFollowing(true);
             }
-         else{
-            setIsFollowing(false);
-         }
     })
 })
-
-
 }
 
 //Putting fetchTargetProfile() in a useEffect hook is necessary to prevent the bug causing the profile from switching back and forth between users
@@ -294,13 +300,14 @@ const mapStatetoProps = store =>({
     currentUserID: store.userState.currentUserID,
     currentProfilePic: store.userState.profilePicURL,
     postArray: store.userState.posts,
+    followedPosts: store.usersState.posts,
     currentVisitingID: store.userState.profileVisitID,
     currentProfilePicPath: store.userState.profilePicPath,
     currentUserName: store.userState.username,
     followingList: store.userState.followers,
 })
 
-const mapDispatchtoProps = dispatch => bindActionCreators({SetFollowers}, dispatch);
+const mapDispatchtoProps = dispatch => bindActionCreators({SetFollowers, removeTargetProfile }, dispatch);
 
 export default connect(mapStatetoProps, mapDispatchtoProps)(Profile);
 

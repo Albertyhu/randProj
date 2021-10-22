@@ -1,4 +1,4 @@
-import {CLEAR_USERS_DATA, ADD_TARGET, COLLECT_TARGET_POSTS} from '../constants';
+import {CLEAR_USERS_DATA, ADD_TARGET, COLLECT_TARGET_POSTS, SET_TARGET_POSTS} from '../constants';
 
 const initialState = {
     users: [],
@@ -18,6 +18,11 @@ switch(action.type){
         return{
             ...state,
             posts: [...state.posts, ...action.allPosts],
+        }
+    case SET_TARGET_POSTS:
+        return{
+            ...state,
+            posts: [...action.allPosts],
         }
     case CLEAR_USERS_DATA:
         return initialState;
