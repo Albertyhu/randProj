@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
         borderColor: '#e0e0e0',
     },
     backButtonText:{
-        color: '#000',
+        color: '#c3c3c3',
         fontSize: 20,
         paddingLeft: 30,
         paddingRight: 30,

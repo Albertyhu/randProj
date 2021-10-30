@@ -17,6 +17,8 @@ FETCH_FOLLOWERS,
 ADD_TARGET,
 COLLECT_TARGET_POSTS,
 SET_TARGET_POSTS,
+SET_POST_LIKERS,
+ADD_POST_LIKERS,
 } from '../constants/index'
 import React, {useState} from 'react';
 import firebase from 'firebase'
@@ -274,7 +276,6 @@ export function AddFollowerToList(uid){
                     console.log('User does not exist')
                 }
             })
-
         }
     })
 }
@@ -295,7 +296,8 @@ return((dispatch, getState)=>{
             //The purpose of the following line is to display the name of the owner of the post in the feed page
             const name = username;
             const data = doc.data();
-            return({id, name, userID, ...data})
+            dispatch(Gather_Post_Likers(uid, doc.id));
+            return({id, name, userID,...data})
         })
         dispatch({type: COLLECT_TARGET_POSTS, allPosts: post})
     })
@@ -303,6 +305,7 @@ return((dispatch, getState)=>{
 }
 
 //sorts the target profile's posts from the most recent to the latest
+//currently not working
 export function sortPosts(){
     return((dispatch, getState)=>{
        var posts = getState().usersState.posts.map(val => {
@@ -311,9 +314,98 @@ export function sortPosts(){
             const creationDate = new Date(val.creationDate.seconds * 1000 + val.creationDate.nanoseconds/1000000);
         return({id, creationDate, username, ...val})
        })
+
+//      console.log(getState().userState.posts.length)
        posts.sort(function(a, b){
         return b.creationDate.seconds - a.creationDate.seconds;
        })
+
        dispatch({type: SET_TARGET_POSTS, allPosts: posts})
+    })
+}
+
+export function checkLikeStatus(post){
+    return((dispatch)=>{
+        firebase.firestore()
+        .collection('posts')
+         .doc(post.userID)
+         .collection('userPosts')
+         .doc(post.id)
+         .collection('likes')
+         .get()
+         .then(snapshot =>{
+            const data = snapshot.docs.map( doc =>{
+                const likers = doc.id;
+                return({likers})
+            })
+         })
+    })
+}
+
+export function Gather_Post_Likers(uid, postID){
+    return((dispatch) =>{
+    //const personID = 'p8MaBsAKXqXjNnJC9TD1ZCopmX33';
+        firebase.firestore()
+        .collection('posts')
+         .doc(uid)
+         .collection('userPosts')
+         .doc(postID)
+         .collection('likes')
+         .get()
+         .then(snapshot =>{
+                     /*
+                        const data = snapshot.docs.map( doc =>{
+                            const likers = doc.id;
+               //             console.log('the likers: ' + likers)
+                            return({likers})
+                        })
+
+                        const listofLikers = data.map(val => {
+                           return({[postID] : val})
+                        })
+                        const likersByPostID = Object.keys(listofLikers).map( val =>({
+                            ...listofLikers,
+                        }))
+                        console.log('Post ID= ' + postID)
+                        console.log(likersByPostID)
+                        */
+            const data = snapshot.docs.map( doc =>{
+                //return({[postID]: doc.id})
+               const likes = doc.id;
+               const post_id = postID
+               return({[post_id]: likes})
+            })
+
+                         //console.log('Post ID2= ' + postID)
+/*
+                         data.forEach(val => {
+                            console.log(val[postID])
+                             if(personID === val[postID])
+                              console.log('true');
+                         })
+*/
+            dispatch({type: ADD_POST_LIKERS, likers: data})
+                     })
+    })
+}
+
+//not in use
+export function addLiker(uid, postID){
+    return((dispatch, getState) =>{
+    const data = ({
+       [postID]: uid,
+    })
+        dispatch({type: ADD_POST_LIKERS, likers: data})
+         console.log(getState().usersState.postLikers)
+    })
+}
+
+//currentUID is the current user's UID
+//postID is the UID of the post that the user 'unlikes'
+//I'm still get the error of Too many re-renders from using this function
+//It's possible that I may not even need this.
+export function replaceStoreLikers(likersArray){
+    return((dispatch) =>{
+        dispatch({type: SET_POST_LIKERS, likers: likersArray})
     })
 }

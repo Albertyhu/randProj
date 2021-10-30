@@ -54,7 +54,7 @@ useEffect(()=>{
     //stores the download URL of profile pic into redux store
     setProfilePic();
     SetFollowers();
-    sortPosts();
+   // sortPosts();
 }, [])
 return (
     <Tab.Navigator

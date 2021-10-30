@@ -1,9 +1,10 @@
-import {CLEAR_USERS_DATA, ADD_TARGET, COLLECT_TARGET_POSTS, SET_TARGET_POSTS} from '../constants';
+import {CLEAR_USERS_DATA, ADD_TARGET, COLLECT_TARGET_POSTS, SET_TARGET_POSTS, SET_POST_LIKERS, ADD_POST_LIKERS} from '../constants';
 
 const initialState = {
     users: [],
     followerLoaded: 0,
     posts: [],
+    postLikers: [],
 }
 
 export const users = (state = initialState, action) =>{
@@ -26,6 +27,16 @@ switch(action.type){
         }
     case CLEAR_USERS_DATA:
         return initialState;
+    case SET_POST_LIKERS:
+        return {
+            ...state,
+            postLikers: [...action.likers],
+        }
+     case ADD_POST_LIKERS:
+         return {
+             ...state,
+             postLikers: [ ...state.postLikers, ...action.likers],
+         }
     default:
         return state;
 
