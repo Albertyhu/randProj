@@ -19,7 +19,7 @@ import Route from './component/route.js';
 
 const Stack = createStackNavigator();
 var firebaseConfig = {
-    apiKey: "AIzaSyBtyxv904sSImhhtkgnO3XtER5LW1KArx8",
+    apiKey: [API Key HERE],
     authDomain: "randproj-41a0d.firebaseapp.com",
     databaseURL: "https://randproj-41a0d-default-rtdb.firebaseio.com",
     projectId: "randproj-41a0d",
